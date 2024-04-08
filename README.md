@@ -1,4 +1,4 @@
-# NextJS Admin Dashboard
+# NextJS Resume Builder
 
 ## Installation
 

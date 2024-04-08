@@ -3,7 +3,6 @@ import { menuItems } from './menuItems';
 import MenuLink from './menuLink/menuLink';
 import Image from 'next/image';
 import { ArrowLeftStartOnRectangleIcon } from '@heroicons/react/20/solid';
-import { UserModel } from '@/app/lib/models';
 
 export default async function Sidebar() {
 	const session = await auth();
@@ -19,9 +18,9 @@ export default async function Sidebar() {
 				/>
 				<div className='flex flex-col'>
 					<span className='weight text-xs font-medium'>
-						{session?.user.username}
+						{session?.user.name}
 					</span>
-					<span>{session?.user.isAdmin ? 'Administrator' : 'Analyst'}</span>
+					<span>{session?.user["system-admin"] ? 'Administrator' : 'Analyst'}</span>
 				</div>
 			</div>
 			<ul className='list-none'>

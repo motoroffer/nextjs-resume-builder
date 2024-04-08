@@ -1,13 +1,27 @@
-import { UserModel } from '@/app/lib/models';
 import NextAuth, { DefaultSession } from 'next-auth';
 
 declare module 'next-auth' {
 	/**
 	 * Returned by `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context
 	 */
-	interface Session {
-		user: UserModel;
+
+	interface Token {
+		"id-user": IdUser;
+		name: string;
+		"system-admin": boolean;
+		active: boolean;
+		linkedin_url: string;
+		profile_name: string;
+		exp: number;
 	}
 
-	interface User extends UserModel {}
+	export interface IdUser {
+		$oid: string;
+	}
+
+	interface User extends Token { }
+	
+	interface Session {
+		user: User;
+	}
 }

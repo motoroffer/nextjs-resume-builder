@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-
+import { useState, useTransition } from 'react';
 import { Button } from '@/components/ui/button';
 import {
 	Form,
@@ -14,9 +14,12 @@ import {
 	FormLabel,
 	FormMessage,
 } from '@/components/ui/form';
+import FormError from '@/components/formError/formError';
 import { Input } from '@/components/ui/input';
 import { authenticate } from '../lib/actions';
 import Link from 'next/link';
+import FormSuccess from '@/components/formSuccess/formSuccess';
+import { AxiosError } from 'axios';
 
 const formSchema = z.object({
 	username: z.string().min(2, {
@@ -26,6 +29,11 @@ const formSchema = z.object({
 });
 
 export default function LoginPage() {
+	const [isPending, startTransition] = useTransition();
+
+	const [error, setError] = useState<string>('');
+	const [success, setSuccess] = useState<boolean>(false);
+
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -44,7 +52,12 @@ export default function LoginPage() {
 						action={async (formData) => {
 							const formReturn = await form.trigger();
 							if (!formReturn) return;
-							authenticate(formData);
+							startTransition(() => {
+								authenticate(formData).then((data) => {
+									setError(data.error || '');
+									setSuccess(data.success || false);
+								});
+							});
 							form.reset();
 							return true; // prevent default form submission behavior
 						}}
@@ -58,6 +71,7 @@ export default function LoginPage() {
 									<FormControl>
 										<Input
 											placeholder='Type your username'
+											disabled={isPending}
 											{...form.register('username')}
 											{...field}
 										/>
@@ -76,6 +90,7 @@ export default function LoginPage() {
 										<Input
 											placeholder='Type your password'
 											type='password'
+											disabled={isPending}
 											{...form.register('password')}
 											{...field}
 										/>
@@ -84,10 +99,13 @@ export default function LoginPage() {
 								</FormItem>
 							)}
 						/>
+						{error && <FormError message={error} />}
+						{success && <FormSuccess message='Login successful!' />}
 						<Button
 							type='submit'
 							className='mt-1 w-[20%]'
 							variant={'secondary'}
+							disabled={isPending}
 						>
 							Login
 						</Button>
@@ -95,7 +113,10 @@ export default function LoginPage() {
 				</Form>
 				<div className='mt-8 flex items-center justify-center text-xs'>
 					<span>
-						Don&apos;t have an account yet? <Link href={'/register'} className='underline'>Register instead</Link>
+						Don&apos;t have an account yet?{' '}
+						<Link href={'/register'} className='underline'>
+							Register instead
+						</Link>
 					</span>
 				</div>
 			</div>

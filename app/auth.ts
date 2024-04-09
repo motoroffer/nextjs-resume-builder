@@ -1,7 +1,7 @@
 import NextAuth, { IdUser, User } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { authConfig } from './auth.config';
-import axios from "axios";
+import axios from 'axios';
 import qs from 'qs';
 import { jwtDecode } from 'jwt-decode';
 
@@ -21,11 +21,10 @@ async function login(username: string, password: string) {
 		};
 		const res = await axios(options);
 		const decoded = jwtDecode(res.data.access_token);
-		console.log("decode", decoded)
+		console.log('decode', decoded);
 		return decoded as User;
 	} catch (error) {
-		console.log(error);
-		throw new Error('Fail to authenticate');
+		throw error;
 	}
 }
 
@@ -42,7 +41,7 @@ export const { signIn, signOut, auth } = NextAuth({
 					);
 					return user;
 				} catch (error) {
-					throw error;
+					return null;
 				}
 			},
 		}),
@@ -50,9 +49,9 @@ export const { signIn, signOut, auth } = NextAuth({
 	callbacks: {
 		async jwt({ token, user }) {
 			if (user) {
-				token["id-user"] = user['id-user'];
+				token['id-user'] = user['id-user'];
 				token.name = user.name;
-				token["system-admin"] = user['system-admin'];
+				token['system-admin'] = user['system-admin'];
 				token.active = user.active;
 				token.linkedin_url = user.linkedin_url;
 				token.profile_name = user.profile_name;
@@ -63,8 +62,8 @@ export const { signIn, signOut, auth } = NextAuth({
 		async session({ session, token }) {
 			if (token) {
 				session.user.name = token.name as string;
-				session.user["id-user"] = token['id-user'] as IdUser;
-				session.user["system-admin"] = token['system-admin'] as boolean;
+				session.user['id-user'] = token['id-user'] as IdUser;
+				session.user['system-admin'] = token['system-admin'] as boolean;
 				session.user.active = token.active as boolean;
 				session.user.linkedin_url = token.linkedin_url as string;
 				session.user.profile_name = token.profile_name as string;
@@ -76,5 +75,5 @@ export const { signIn, signOut, auth } = NextAuth({
 	session: {
 		strategy: 'jwt',
 		maxAge: 30 * 24 * 60 * 60, // 30 days
-	}
+	},
 });

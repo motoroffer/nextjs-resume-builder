@@ -1,6 +1,8 @@
 'use server';
 
+import { AxiosError } from 'axios';
 import { signIn } from '../auth';
+import { AuthError, CredentialsSignin } from 'next-auth';
 
 export const addUser = async (formData: FormData) => {
 	const { username, email, password, phone, address, isAdmin, isActive } =
@@ -18,8 +20,17 @@ export const authenticate = async (formData: FormData) => {
 	const { username, password } = Object.fromEntries(formData);
 	try {
 		await signIn('credentials', { username, password });
+		return { success: true };
 	} catch (error) {
-		console.log("Error authenticating: ", error.message);
+		if (error instanceof AuthError) {
+			switch (error.type) {
+				case 'CredentialsSignin':
+					return { error: 'Invalid credentials!' };
+
+				default:
+					return { error: 'Something went wrong!' };
+			}
+		}
 		throw error;
 	}
 };

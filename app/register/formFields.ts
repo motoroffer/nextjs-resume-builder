@@ -1,6 +1,6 @@
 export const formFields: {
 	label: string;
-	name: 'username' | 'email' | 'phone' | 'address' | 'password';
+	name: 'username' | 'phone' | 'address' | 'password';
 	type: 'text' | 'email' | 'password';
 	placeholder: string;
 	flexAmount: string;
@@ -19,13 +19,13 @@ export const formFields: {
 		placeholder: 'Create a password',
 		flexAmount: '1',
 	},
-	{
-		label: 'Email',
-		name: 'email',
-		type: 'email',
-		placeholder: 'Insert your email',
-		flexAmount: '1',
-	},
+	// {
+	// 	label: 'Email',
+	// 	name: 'email',
+	// 	type: 'email',
+	// 	placeholder: 'Insert your email',
+	// 	flexAmount: '1',
+	// },
 	{
 		label: 'Phone',
 		name: 'phone',

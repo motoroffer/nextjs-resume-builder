@@ -33,29 +33,9 @@ export const menuItems = [
 				icon: <HomeIcon className={`${defaultIconStyle}`} />,
 			},
 			{
-				title: 'Users',
-				path: '/dashboard/users',
+				title: 'Build your resume',
+				path: '/dashboard/resume-builder',
 				icon: <UserIcon className={`${defaultIconStyle}`} />,
-			},
-			{
-				title: 'Fast Answers',
-				path: '/dashboard/answers',
-				icon: <ChatBubbleLeftRightIcon className={`${defaultIconStyle}`} />,
-			},
-			{
-				title: 'Schedules',
-				path: '/dashboard/schedules',
-				icon: <CalendarIcon className={`${defaultIconStyle}`} />,
-			},
-		],
-	},
-	{
-		title: 'Analytics',
-		list: [
-			{
-				title: 'Reports',
-				path: '/dashboard/reports',
-				icon: <ClipboardDocumentIcon className={`${defaultIconStyle}`} />,
 			},
 		],
 	},

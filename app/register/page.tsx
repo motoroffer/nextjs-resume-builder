@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { addUser } from '../lib/actions';
+import { addUser } from '../actions/addUser';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -24,10 +24,10 @@ const formSchema = z.object({
 	username: z.string().min(4, {
 		message: 'Username must be at least 4 characters.',
 	}),
-	email: z
-		.string()
-		.min(1, { message: 'Field is required' })
-		.email({ message: 'Must be a valid email' }),
+	// email: z
+	// 	.string()
+	// 	.min(1, { message: 'Field is required' })
+	// 	.email({ message: 'Must be a valid email' }),
 	phone: z.string().refine(validator.isMobilePhone, {
 		message: 'Please insert a valid mobile phone number',
 	}),
@@ -41,7 +41,7 @@ export default function RegisterPage() {
 		defaultValues: {
 			username: '',
 			password: '',
-			email: '',
+			// email: '',
 			phone: '',
 			address: '',
 		},
@@ -112,7 +112,10 @@ export default function RegisterPage() {
 				</Form>
 				<div className='mt-8 flex items-center justify-center text-xs'>
 					<span>
-						Already have an account? <Link href={'/login'} className='underline'>Login instead</Link>
+						Already have an account?{' '}
+						<Link href={'/login'} className='underline'>
+							Login instead
+						</Link>
 					</span>
 				</div>
 			</div>

@@ -5,11 +5,6 @@ import axios from 'axios';
 import qs from 'qs';
 import { jwtDecode } from 'jwt-decode';
 
-interface Credentials {
-	username: string;
-	password: string;
-}
-
 async function login(username: string, password: string) {
 	try {
 		const data = { username, password };

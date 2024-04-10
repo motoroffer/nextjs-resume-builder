@@ -20,7 +20,9 @@ export default async function Sidebar() {
 					<span className='weight text-xs font-medium'>
 						{session?.user.name}
 					</span>
-					<span>{session?.user["system-admin"] ? 'Administrator' : 'Analyst'}</span>
+					<span>
+						{session?.user['system-admin'] ? 'Administrator' : 'Analyst'}
+					</span>
 				</div>
 			</div>
 			<ul className='list-none'>

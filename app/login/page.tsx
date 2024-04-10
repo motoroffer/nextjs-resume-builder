@@ -8,18 +8,16 @@ import { Button } from '@/components/ui/button';
 import {
 	Form,
 	FormControl,
-	FormDescription,
 	FormField,
 	FormItem,
 	FormLabel,
 	FormMessage,
 } from '@/components/ui/form';
-import FormError from '@/components/formError/formError';
+import FormError from '@/components/ui/formError';
 import { Input } from '@/components/ui/input';
-import { authenticate } from '../lib/actions';
+import { authenticate } from '../actions/authenticate';
 import Link from 'next/link';
-import FormSuccess from '@/components/formSuccess/formSuccess';
-import { AxiosError } from 'axios';
+import FormSuccess from '@/components/ui/formSuccess';
 
 const formSchema = z.object({
 	username: z.string().min(2, {

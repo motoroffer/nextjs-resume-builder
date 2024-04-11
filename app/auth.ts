@@ -15,9 +15,9 @@ async function login(username: string, password: string) {
 			url: `${process.env.API_URL}/token`,
 		};
 		const res = await axios(options);
-		const decoded = jwtDecode(res.data.access_token);
-		console.log('decode', decoded);
-		return decoded as User;
+		const decoded: User = jwtDecode(res.data.access_token);
+		decoded.accessToken = res.data.access_token;
+		return decoded;
 	} catch (error) {
 		throw error;
 	}
@@ -51,6 +51,7 @@ export const { signIn, signOut, auth } = NextAuth({
 				token.linkedin_url = user.linkedin_url;
 				token.profile_name = user.profile_name;
 				token.exp = user.exp;
+				token.accessToken = user.accessToken;
 			}
 			return token;
 		},
@@ -63,6 +64,7 @@ export const { signIn, signOut, auth } = NextAuth({
 				session.user.linkedin_url = token.linkedin_url as string;
 				session.user.profile_name = token.profile_name as string;
 				session.user.exp = token.exp as number;
+				session.user.accessToken = token.accessToken as string;
 			}
 			return session;
 		},

@@ -6,9 +6,9 @@ declare module 'next-auth' {
 	 */
 
 	interface Token {
-		"id-user": IdUser;
+		'id-user': IdUser;
 		name: string;
-		"system-admin": boolean;
+		'system-admin': boolean;
 		active: boolean;
 		linkedin_url: string;
 		profile_name: string;
@@ -19,9 +19,12 @@ declare module 'next-auth' {
 		$oid: string;
 	}
 
-	interface User extends Token { }
-	
+	interface User extends Token {
+		accessToken: string;
+	}
+
 	interface Session {
 		user: User;
+		accessToken: string;
 	}
 }

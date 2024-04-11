@@ -52,7 +52,11 @@ const defaultValues: Partial<ProfileFormValues> = {
 	],
 };
 
-export default function ProfileForm() {
+interface ProfileFormProps {
+	linkedinData: any;
+}
+
+export default function ProfileForm({ linkedinData }: ProfileFormProps) {
 	const form = useForm<ProfileFormValues>({
 		resolver: zodResolver(profileFormSchema),
 		defaultValues,
@@ -60,6 +64,7 @@ export default function ProfileForm() {
 	});
 
 	function onSubmit(data: ProfileFormValues) {}
+
 	return (
 		<Form {...form}>
 			<form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>

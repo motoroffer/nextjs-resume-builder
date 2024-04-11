@@ -51,7 +51,7 @@ export default function LoginPage() {
 							const formReturn = await form.trigger();
 							if (!formReturn) return;
 							startTransition(() => {
-								authenticate(formData).then((data) => {
+								return authenticate(formData).then((data) => {
 									setError(data.error || '');
 									setSuccess(data.success || false);
 								});

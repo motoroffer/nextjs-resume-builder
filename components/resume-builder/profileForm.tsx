@@ -1,41 +1,38 @@
 'use client';
 
-import Link from 'next/link';
-import { useForm } from 'react-hook-form';
-import { Button } from '../ui/button';
-import {
-	Form,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormControl,
-	FormDescription,
-	FormMessage,
-} from '../ui/form';
-import { Input } from '../ui/input';
-import { Textarea } from '../ui/textarea';
+import FormInput from '@/components/ui/formInput';
+import FormTextArea from '@/components/ui/formTextArea';
+import { Experience } from '@/types/experience';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { Button } from '../ui/button';
+import DatePicker from '../ui/datepicker';
+import { Form, FormField } from '../ui/form';
 
 const profileFormSchema = z.object({
-	username: z
-		.string()
-		.min(2, {
-			message: 'Username must be at least 2 characters.',
-		})
-		.max(30, {
-			message: 'Username must not be longer than 30 characters.',
-		}),
-	email: z
-		.string({
-			required_error: 'Please select an email to display.',
-		})
-		.email(),
-	bio: z.string().max(160).min(4),
+	fullName: z.string().min(4, {
+		message: 'Your full name must contain at least 4 characters.',
+	}),
+	headline: z.string().optional(),
+	bio: z.string().optional(),
 	urls: z
 		.array(
 			z.object({
 				value: z.string().url({ message: 'Please enter a valid URL.' }),
+			})
+		)
+		.optional(),
+	experiences: z
+		.array(
+			z.object({
+				company: z
+					.string()
+					.min(2, 'Company name must be at least 2 characters'),
+				title: z.string().min(2, 'Title must be at least 2 characters'),
+				startDate: z.date().optional().nullable(),
+				endDate: z.date().optional().nullable(),
+				description: z.string().optional(),
 			})
 		)
 		.optional(),
@@ -56,12 +53,40 @@ interface ProfileFormProps {
 	linkedinData: any;
 }
 
-export default function ProfileForm({ linkedinData }: ProfileFormProps) {
+export default function ProfileForm({ linkedinData = {} }: ProfileFormProps) {
 	const form = useForm<ProfileFormValues>({
 		resolver: zodResolver(profileFormSchema),
 		defaultValues,
 		mode: 'onChange',
 	});
+
+	const {
+		control,
+		register,
+		watch,
+		formState: { errors },
+	} = form;
+	const experiences = watch('experiences', []) as Experience[]; // Get initial experiences or empty array
+
+	function addExperience() {
+		form.setValue('experiences', [
+			...experiences,
+			{
+				company: '',
+				title: '',
+				startDate: null,
+				endDate: null,
+				description: '',
+			},
+		]);
+	}
+
+	function removeExperience(index: number) {
+		form.setValue(
+			'experiences',
+			experiences.filter((_, i) => i !== index)
+		);
+	}
 
 	function onSubmit(data: ProfileFormValues) {}
 
@@ -70,59 +95,84 @@ export default function ProfileForm({ linkedinData }: ProfileFormProps) {
 			<form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
 				<FormField
 					control={form.control}
-					name='username'
+					name='fullName'
 					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Username</FormLabel>
-							<FormControl>
-								<Input placeholder='shadcn' {...field} />
-							</FormControl>
-							<FormDescription>
-								This is your public display name. It can be your real name or a
-								pseudonym. You can only change this once every 30 days.
-							</FormDescription>
-							<FormMessage />
-						</FormItem>
+						<FormInput
+							field={field}
+							label='Full Name'
+							placeholder='Insert your full name...'
+						/>
 					)}
 				/>
 				<FormField
 					control={form.control}
-					name='email'
+					name='headline'
 					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Email</FormLabel>
-							<FormControl>
-								<Input placeholder='shadcn' {...field} />
-							</FormControl>
-							<FormDescription>
-								You can manage verified email addresses in your{' '}
-								<Link href='/examples/forms'>email settings</Link>.
-							</FormDescription>
-							<FormMessage />
-						</FormItem>
+						<FormInput
+							field={field}
+							label='Headline'
+							placeholder='Insert your headline...'
+						/>
 					)}
 				/>
 				<FormField
 					control={form.control}
 					name='bio'
 					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Bio</FormLabel>
-							<FormControl>
-								<Textarea
-									placeholder='Tell us a little bit about yourself'
-									className='resize-none'
-									{...field}
-								/>
-							</FormControl>
-							<FormDescription>
-								You can <span>@mention</span> other users and organizations to
-								link to them.
-							</FormDescription>
-							<FormMessage />
-						</FormItem>
+						<FormTextArea
+							field={field}
+							label='Bio'
+							placeholder='Insert a brief biography/description about you and your skills'
+						/>
 					)}
 				/>
+				<Button
+					type='button'
+					variant={'outline'}
+					onClick={() => {
+						addExperience();
+					}}
+				>
+					+ Add Experience
+				</Button>
+				<ul className='experience-list'>
+					{experiences.map((experience, index) => (
+						<li key={index} className='mt-4'>
+							<FormField
+								control={form.control}
+								name={`experiences.${index}.company`}
+								render={({ field }) => (
+									<FormInput
+										field={field}
+										label='Company'
+										placeholder='Insert your company...'
+									/>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name={`experiences.${index}.title`}
+								render={({ field }) => (
+									<FormInput
+										field={field}
+										label='Title'
+										placeholder='Insert your job title...'
+									/>
+								)}
+							/>
+							<Controller
+								control={control}
+								name={`experiences.${index}.startDate`}
+								render={({ field }) => <DatePicker field={field} />}
+							/>
+
+							{/* Add similar FormItems for startDate, endDate, and description if needed */}
+							<button type='button' onClick={() => removeExperience(index)}>
+								Remove
+							</button>
+						</li>
+					))}
+				</ul>
 				<Button type='submit'>Update profile</Button>
 			</form>
 		</Form>

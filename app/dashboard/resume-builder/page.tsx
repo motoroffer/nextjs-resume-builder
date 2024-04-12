@@ -8,12 +8,13 @@ import { Suspense } from 'react';
 import { unstable_noStore } from 'next/cache';
 
 async function ImportLinkedinProfile() {
-	unstable_noStore();
-	const result = await getLinkedinProfile();
-	if (result?.error) {
-		return <h1>{result.error}</h1>;
-	}
-	return <ProfileForm linkedinData={result.data} />;
+	// unstable_noStore();
+	// const result = await getLinkedinProfile();
+	// if (result?.error) {
+	// 	return <h1>{result.error}</h1>;
+	// }
+	// return <ProfileForm linkedinData={result.data} />;
+	return <ProfileForm />;
 }
 
 export default async function ResumeBuilder() {

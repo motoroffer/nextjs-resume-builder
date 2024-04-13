@@ -9,6 +9,15 @@ import { z } from 'zod';
 import { Button } from '../ui/button';
 import DatePicker from '../ui/datepicker';
 import { Form, FormField } from '../ui/form';
+import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from '@/components/ui/accordion';
+import { FormLabel } from '@/components/ui/form';
+import { TrashIcon } from '@heroicons/react/20/solid';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const profileFormSchema = z.object({
 	fullName: z.string().min(4, {
@@ -30,24 +39,16 @@ const profileFormSchema = z.object({
 					.string()
 					.min(2, 'Company name must be at least 2 characters'),
 				title: z.string().min(2, 'Title must be at least 2 characters'),
-				startDate: z.date().optional().nullable(),
+				startDate: z.date().nullable(),
 				endDate: z.date().optional().nullable(),
 				description: z.string().optional(),
+				currentJob: z.boolean().optional(),
 			})
 		)
 		.optional(),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
-
-// This can come from your database or API.
-const defaultValues: Partial<ProfileFormValues> = {
-	bio: 'I own a computer.',
-	urls: [
-		{ value: 'https://shadcn.com' },
-		{ value: 'http://twitter.com/shadcn' },
-	],
-};
 
 interface ProfileFormProps {
 	linkedinData: any;
@@ -56,7 +57,6 @@ interface ProfileFormProps {
 export default function ProfileForm({ linkedinData = {} }: ProfileFormProps) {
 	const form = useForm<ProfileFormValues>({
 		resolver: zodResolver(profileFormSchema),
-		defaultValues,
 		mode: 'onChange',
 	});
 
@@ -77,6 +77,7 @@ export default function ProfileForm({ linkedinData = {} }: ProfileFormProps) {
 				startDate: null,
 				endDate: null,
 				description: '',
+				currentJob: false,
 			},
 		]);
 	}
@@ -126,53 +127,129 @@ export default function ProfileForm({ linkedinData = {} }: ProfileFormProps) {
 						/>
 					)}
 				/>
-				<Button
-					type='button'
-					variant={'outline'}
-					onClick={() => {
-						addExperience();
-					}}
-				>
-					+ Add Experience
-				</Button>
-				<ul className='experience-list'>
-					{experiences.map((experience, index) => (
-						<li key={index} className='mt-4'>
-							<FormField
-								control={form.control}
-								name={`experiences.${index}.company`}
-								render={({ field }) => (
-									<FormInput
-										field={field}
-										label='Company'
-										placeholder='Insert your company...'
-									/>
-								)}
-							/>
-							<FormField
-								control={form.control}
-								name={`experiences.${index}.title`}
-								render={({ field }) => (
-									<FormInput
-										field={field}
-										label='Title'
-										placeholder='Insert your job title...'
-									/>
-								)}
-							/>
-							<Controller
-								control={control}
-								name={`experiences.${index}.startDate`}
-								render={({ field }) => <DatePicker field={field} />}
-							/>
+				<Accordion type='single' collapsible>
+					<AccordionItem value='item-1'>
+						<AccordionTrigger className='h-20 rounded border border-slate-500 p-4'>
+							Professional Experience
+						</AccordionTrigger>
+						<AccordionContent>
+							<ul className='experience-list'>
+								{experiences.map((experience, index) => (
+									<li
+										key={index}
+										className='mt-6 border-b border-b-slate-500 pb-6'
+									>
+										<div className='mb-2 flex w-full flex-row items-center justify-end'>
+											<div className='flex w-full items-center justify-between self-end'>
+												<Controller
+													control={control}
+													name={`experiences.${index}.currentJob`}
+													render={({ field }) => {
+														return (
+															<div className='items-top flex space-x-2'>
+																<Checkbox id='terms1' />
+																<div className='grid gap-1.5 leading-none'>
+																	<label
+																		htmlFor='terms1'
+																		className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
+																	>
+																		This is my current job
+																	</label>
+																</div>
+															</div>
+														);
+													}}
+												/>
+												<Controller
+													control={control}
+													name={`experiences.${index}.startDate`}
+													render={({ field }) => {
+														return (
+															<div className='flex flex-row items-center justify-end gap-4'>
+																<FormLabel>Start Date:</FormLabel>
+																<DatePicker field={field} />
+															</div>
+														);
+													}}
+												/>
+												<Controller
+													control={control}
+													name={`experiences.${index}.endDate`}
+													render={({ field }) => {
+														return (
+															<div className='flex flex-row items-center justify-end gap-4'>
+																<FormLabel>End Date:</FormLabel>
+																<DatePicker field={field} />
+															</div>
+														);
+													}}
+												/>
+											</div>
+										</div>
 
-							{/* Add similar FormItems for startDate, endDate, and description if needed */}
-							<button type='button' onClick={() => removeExperience(index)}>
-								Remove
-							</button>
-						</li>
-					))}
-				</ul>
+										<FormField
+											control={form.control}
+											name={`experiences.${index}.company`}
+											render={({ field }) => (
+												<FormInput
+													field={field}
+													label='Company'
+													placeholder='Insert your company...'
+												/>
+											)}
+										/>
+										<FormField
+											control={form.control}
+											name={`experiences.${index}.title`}
+											render={({ field }) => (
+												<FormInput
+													field={field}
+													label='Title'
+													placeholder='Insert your job title...'
+												/>
+											)}
+										/>
+										<FormField
+											control={form.control}
+											name={`experiences.${index}.description`}
+											render={({ field }) => (
+												<FormTextArea
+													field={field}
+													label='Description'
+													placeholder='Describe how you applied your skills at this specific position...'
+												/>
+											)}
+										/>
+
+										<div className='mt-4 flex w-full flex-row items-center justify-end'>
+											<Button
+												type='button'
+												onClick={() => removeExperience(index)}
+												variant={'outline'}
+											>
+												<div className='flex flex-row items-center justify-center gap-4'>
+													<TrashIcon className='h-4 w-4' />
+													Remove
+												</div>
+											</Button>
+										</div>
+									</li>
+								))}
+							</ul>
+							<Button
+								className='mt-7'
+								type='button'
+								variant={'outline'}
+								onClick={() => {
+									addExperience();
+								}}
+							>
+								+ Add Experience
+							</Button>
+						</AccordionContent>
+					</AccordionItem>
+				</Accordion>
+
 				<Button type='submit'>Update profile</Button>
 			</form>
 		</Form>

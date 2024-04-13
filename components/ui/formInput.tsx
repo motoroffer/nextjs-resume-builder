@@ -14,7 +14,7 @@ export default function FormInput<T extends FieldValues>({
 	placeholder,
 }: FormInputProps<T>) {
 	return (
-		<FormItem>
+		<FormItem className='mb-4'>
 			<FormLabel>{label}</FormLabel>
 			<FormControl>
 				<Input placeholder={placeholder} {...(field as InputProps)} />

@@ -7,7 +7,7 @@ import {
 	PageHeader,
 	PageHeaderDescription,
 	PageHeaderHeading,
-} from '@/components/pageHeader';
+} from '@/components/ui/pageHeader';
 import { buttonVariants } from '@/components/ui/button';
 
 export const metadata: Metadata = {

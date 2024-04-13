@@ -20,7 +20,7 @@ export default function DatePicker<T extends FieldValues>({
 				<Button
 					variant={'outline'}
 					className={cn(
-						'w-[280px] justify-start text-left font-normal',
+						'w-[150px] justify-start text-left font-normal',
 						!field.value && 'text-muted-foreground'
 					)}
 				>
